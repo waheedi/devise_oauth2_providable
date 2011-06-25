@@ -1,6 +1,6 @@
 class Client < ActiveRecord::Base
-  has_many :access_tokens
-  has_many :refresh_tokens
+  has_many_related :access_tokens
+  has_many_related :refresh_tokens
 
   before_validation :init_identifier, :on => :create, :unless => :identifier?
   before_validation :init_secret, :on => :create, :unless => :secret?

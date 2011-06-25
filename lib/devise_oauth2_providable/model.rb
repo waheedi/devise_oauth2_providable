@@ -5,8 +5,8 @@ module Devise
     module Oauth2Providable
       extend ActiveSupport::Concern
       included do
-        has_many :access_tokens
-        has_many :authorization_codes
+        has_many_related :access_tokens
+        has_many_related :authorization_codes
       end
     end
   end
