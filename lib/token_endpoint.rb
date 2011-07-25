@@ -8,7 +8,7 @@ class TokenEndpoint
 
   def authenticator
     Rack::OAuth2::Server::Token.new do |req, res|
-      client = Client.find_by_identifier(req.client_id)
+      client = Client.where(:identifier => req.client_id).first
       req.invalid_client! unless client && client.secret == req.client_secret
       begin
         res.access_token = access_token(req, client).to_bearer_token
@@ -29,7 +29,7 @@ class TokenEndpoint
   def find_refresh_token(req, client)
     case req.grant_type
     when :authorization_code
-      code = AuthorizationCode.valid.find_by_token(req.code)
+      code = AuthorizationCode.valid.where(:identifier => req.code).first
       raise InvalidGrantType.new('invalid authorization code') unless code && code.valid_request?(req)
       client.refresh_tokens.create! :user => code.user
     when :password
@@ -40,7 +40,7 @@ class TokenEndpoint
       raise InvalidGrantType.new("authentication failed: #{valid}") unless valid.is_a?(TrueClass)
       client.refresh_tokens.create! :user => resource
     when :refresh_token
-      refresh_token = client.refresh_tokens.valid.find_by_token(req.refresh_token)
+      refresh_token = client.refresh_tokens.valid.where(:token => req.refresh_token).first
       raise InvalidGrantType.new('refresh token not found') unless refresh_token
       refresh_token
     else

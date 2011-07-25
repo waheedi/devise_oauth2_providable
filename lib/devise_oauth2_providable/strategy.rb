@@ -9,7 +9,7 @@ module Devise
       end
       def authenticate!
         @req.setup!
-        token = AccessToken.valid.find_by_token @req.access_token
+        token = AccessToken.valid.where(:token => @req.access_token).first
         env['oauth2.client'] = token ? token.client : nil
         resource = token ? token.user : nil
         if validate(resource)

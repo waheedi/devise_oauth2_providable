@@ -1,12 +1,15 @@
 module ExpirableToken
+  
+  
   def self.included(klass)
+    
+    
     klass.class_eval do
       cattr_accessor :default_lifetime
       self.default_lifetime = 1.minute
-
-      belongs_to :user
-      belongs_to :client
-
+      
+      belongs_to_related :user
+      belongs_to_related :client
       before_validation :init_token, :on => :create, :unless => :token?
       before_validation :init_expires_at, :on => :create, :unless => :expires_at?
       validates :expires_at, :presence => true
@@ -28,7 +31,9 @@ module ExpirableToken
     self.expires_at = Time.now.utc
     self.save!
   end
+  
 
+  
   private
 
   def init_token
@@ -37,5 +42,7 @@ module ExpirableToken
   def init_expires_at
     self.expires_at = self.default_lifetime.from_now
   end
+  
+  
 end
 
